@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viwan's Tropique Beach Bar & Grill</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@7.22.5/babel.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YOUR_GA4_ID"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-white font-inter">
+    <!-- Navigation Bar -->
+    <nav class="bg-[#14B8A6] text-white p-6 fixed top-0 w-full z-20 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/50x50?text=V1" alt="V1 Tropique Monogram" class="h-14 mr-4">
+                <h1 class="text-3xl font-extrabold">Viwan's Tropique</h1>
+            </div>
+            <ul class="flex space-x-10 text-lg">
+                <li><a href="#home" class="hover:text-[#FACC15] transition">Home</a></li>
+                <li><a href="#menu" class="hover:text-[#FACC15] transition">Menu</a></li>
+                <li><a href="#cart" class="hover:text-[#FACC15] transition">Cart <span id="cart-count" class="bg-[#FACC15] text-[#14B8A6] rounded-full px-2 py-1 text-sm">0</span></a></li>
+                <li><a href="#loyalty" class="hover:text-[#FACC15] transition">Loyalty</a></li>
+                <li><a href="#track" class="hover:text-[#FACC15] transition">Track Order</a></li>
+                <li><a href="#contact" class="hover:text-[#FACC15] transition">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://via.placeholder.com/1920x1080?text=Vidazini+Beach+Sunset')">
+        <div class="absolute inset-0 bg-[#14B8A6] opacity-40"></div>
+        <div class="relative z-10 container mx-auto px-4">
+            <img src="https://via.placeholder.com/120x120?text=V1" alt="V1 Tropique Monogram" class="mx-auto mb-8 h-36 animate-pulse">
+            <h2 class="text-6xl font-extrabold text-white mb-6 drop-shadow-2xl">Viwan's Tropique Beach Bar & Grill</h2>
+            <p class="text-2xl text-white mb-10 max-w-2xl mx-auto">Taste the Coast: Order Kenya’s finest drinks, delivered from Vidazini Beach in 20-50 min!</p>
+            <a href="#menu" class="inline-block bg-[#FACC15] text-[#14B8A6] py-4 px-10 rounded-full hover:bg-[#F87171] font-bold text-xl shadow-lg transition transform hover:scale-105">Order Now</a>
+        </div>
+    </section>
+
+    <!-- Popular Picks Section -->
+    <section id="popular" class="py-24 bg-[#F5F5F5]">
+        <div class="container mx-auto text-center">
+            <h2 class="text-5xl font-extrabold text-[#14B8A6] mb-12">Popular Picks</h2>
+            <div id="popular-picks" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4"></div>
+        </div>
+    </section>
+
+    <!-- Drinks Menu Section -->
+    <section id="menu" class="py-24 bg-white">
+        <div class="container mx-auto text-center">
+            <h2 class="text-5xl font-extrabold text-[#14B8A6] mb-12">Full Drinks Menu</h2>
+            <div id="search-bar" class="max-w-md mx-auto mb-8"></div>
+            <div id="drinks-menu" class="space-y-16"></div>
+        </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section id="cart" class="py-24 bg-[#F5F5F5]">
+        <div class="container mx-auto text-center">
+            <h2 class="text-5xl font-extrabold text-[#14B8A6] mb-12">Your Cart</h2>
+            <div id="cart-items" class="max-w-2xl mx-auto"></div>
+            <div id="cart-total" class="text-xl text-gray-800 mt-8"></div>
+            <button id="checkout-button" class="mt-6 bg-[#FACC15] text-[#14B8A6] py-4 px-10 rounded-full hover:bg-[#F87171] font-bold text-lg shadow-lg transition transform hover:scale-105 hidden">Checkout with M-Pesa</button>
+        </div>
+    </section>
+
+    <!-- Loyalty Program Section -->
+    <section id="loyalty" class="py-24 bg-[#F5F5F5]">
+        <div class="container mx-auto text-center">
+            <h2 class="text-5xl font-extrabold text-[#14B8A6] mb-12">Tropique Loyalty Program</h2>
+            <p class="text-xl text-gray-700 mb-10 max-w-xl mx-auto">Earn 10 points per KSh 1000 spent. Redeem 100 points for a free drink!</p>
+            <div class="max-w-md mx-auto">
+                <input type="text" id="loyalty-id" placeholder="Enter Loyalty ID (e.g., VL1234)" class="w-full p-4 mb-6 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-[#FACC15]">
+                <button id="check-loyalty-button" class="bg-[#FACC15] text-[#14B8A6] py-4 px-10 rounded-full hover:bg-[#F87171] font-bold text-lg shadow-lg transition transform hover:scale-105">Check Points</button>
+            </div>
+            <div id="loyalty-status" class="mt-10 text-xl text-gray-800"></div>
+        </div>
+    </section>
+
+    <!-- Order Tracking Section -->
+    <section id="track" class="py-24 bg-[#F5F5F5]">
+        <div class="container mx-auto text-center">
+            <h2 class="text-5xl font-extrabold text-[#14B8A6] mb-12">Track Your Order</h2>
+            <p class="text-xl text-gray-700 mb-10 max-w-xl mx-auto">Check your order status in real-time, straight from Vidazini Beach!</p>
+            <div class="max-w-md mx-auto">
+                <input type="text" id="order-id" placeholder="Enter Order ID (e.g., VT1234)" class="w-full p-4 mb-6 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-[#FACC15]">
+                <button id="track-order-button" class="bg-[#FACC15] text-[#14B8A6] py-4 px-10 rounded-full hover:bg-[#F87171] font-bold text-lg shadow-lg transition transform hover:scale-105">Track Now</button>
+            </div>
+            <div id="order-status" class="mt-10 text-xl text-gray-800"></div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-[#F5F5F5]">
+        <div class="container mx-auto text-center">
+            <h2 class="text-5xl font-extrabold text-[#14B8A6] mb-12">Get in Touch</h2>
+            <p class="text-xl text-gray-700 mb-10 max-w-xl mx-auto">Visit us at Vidazini Beach or connect online for orders and vibes!</p>
+            <div class="max-w-md mx-auto">
+                <p class="text-gray-800 mb-4 text-lg">📞 Call/WhatsApp: <a href="tel:+254797849808" class="underline hover:text-[#FACC15] transition">0797849808</a></p>
+                <p class="text-gray-800 mb-8 text-lg">📧 Email: <a href="mailto:viwanstropique@gmail.com" class="underline hover:text-[#FACC15] transition">viwanstropique@gmail.com</a></p>
+                <input type="text" id="contact-name" placeholder="Your Name" class="w-full p-4 mb-4 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-[#FACC15]">
+                <input type="email" id="contact-email" placeholder="Your Email" class="w-full p-4 mb-4 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-[#FACC15]">
+                <textarea id="contact-message" placeholder="Your Message" class="w-full p-4 mb-4 border rounded-lg h-40 text-lg focus:outline-none focus:ring-2 focus:ring-[#FACC15]"></textarea>
+                <button id="contact-button" class="bg-[#FACC15] text-[#14B8A6] py-4 px-10 rounded-full hover:bg-[#F87171] font-bold text-lg shadow-lg transition transform hover:scale-105">Send Message</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Chat -->
+    <div id="live-chat"></div>
+
+    <!-- Footer -->
+    <footer class="bg-[#14B8A6] text-white text-center py-10">
+        <p class="text-lg">© 2025 Viwan's Tropique Beach Bar & Grill. Vidazini Beach, Kilifi County. All rights reserved.</p>
+    </footer>
+
+    <script type="text/babel">
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "viwans-tropique.firebaseapp.com",
+            databaseURL: "https://viwans-tropique-default-rtdb.firebaseio.com",
+            projectId: "viwans-tropique",
+            storageBucket: "viwans-tropique.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Google Analytics
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-YOUR_GA4_ID');
+
+        const drinks = [
+            {
+                category: "Beers",
+                items: [
+                    { id: 1, name: "Tusker Lager", price: 320, image: "https://via.placeholder.com/300x300?text=Tusker", description: "Kenya’s iconic crisp lager, perfect for a beach day." },
+                    { id: 2, name: "White Cap", price: 350, image: "https://via.placeholder.com/300x300?text=White+Cap", description: "Smooth and refreshing coastal favorite." },
+                    { id: 3, name: "Pilsner", price: 300, image: "https://via.placeholder.com/300x300?text=Pilsner", description: "Bold, crisp beer with a kick." },
+                    { id: 4, name: "Balozi", price: 340, image: "https://via.placeholder.com/300x300?text=Balozi", description: "Rich, malty Kenyan brew." },
+                    { id: 5, name: "Tusker Malt", price: 360, image: "https://via.placeholder.com/300x300?text=Tusker+Malt", description: "Premium lager with a fuller flavor." },
+                    { id: 6, name: "Guinness", price: 380, image: "https://via.placeholder.com/300x300?text=Guinness", description: "Dark, creamy stout for bold tastes." },
+                    { id: 7, name: "Heineken", price: 400, image: "https://via.placeholder.com/300x300?text=Heineken", description: "Crisp, international lager." }
+                ]
+            },
+            {
+                category: "Spirits",
+                items: [
+                    { id: 8, name: "Kenya Cane", price: 1000, image: "https://via.placeholder.com/300x300?text=Kenya+Cane", description: "Smooth cane spirit, ideal for cocktails." },
+                    { id: 9, name: "Gilbeys Gin", price: 1200, image: "https://via.placeholder.com/300x300?text=Gilbeys", description: "Classic gin for a coastal G&T." },
+                    { id: 10, name: "Chrome Vodka", price: 1100, image: "https://via.placeholder.com/300x300?text=Chrome+Vodka", description: "Pure, crisp local vodka." },
+                    { id: 11, name: "Smirnoff Red", price: 1300, image: "https://via.placeholder.com/300x300?text=Smirnoff", description: "Versatile vodka for any mix." },
+                    { id: 12, name: "Viceroys Brandy", price: 1400, image: "https://via.placeholder.com/300x300?text=Viceroys", description: "Rich and smooth local brandy." },
+                    { id: 13, name: "Captain Morgan Rum", price: 1500, image: "https://via.placeholder.com/300x300?text=Captain+Morgan", description: "Spiced rum for tropical vibes." }
+                ]
+            },
+            {
+                category: "Cocktails",
+                items: [
+                    { id: 14, name: "Dawa Cocktail", price: 960, image: "https://via.placeholder.com/300x300?text=Dawa", description: "Vodka, honey, and lime—Kenya’s classic." },
+                    { id: 15, name: "Kilifi Sunset", price: 1000, image: "https://via.placeholder.com/300x300?text=Kilifi+Sunset", description: "Rum, mango, and passion fruit blend." },
+                    { id: 16, name: "Madafu Mojito", price: 950, image: "https://via.placeholder.com/300x300?text=Madafu+Mojito", description: "Coconut-infused mojito with mint." },
+                    { id: 17, name: "Tropique Mai Tai", price: 1100, image: "https://via.placeholder.com/300x300?text=Mai+Tai", description: "Rum, pineapple, and orange delight." },
+                    { id: 18, name: "Swahili Spritz", price: 980, image: "https://via.placeholder.com/300x300?text=Swahili+Spritz", description: "Gin, soda, and tropical bitters." },
+                    { id: 19, name: "Pwani Pina Colada", price: 1050, image: "https://via.placeholder.com/300x300?text=Pina+Colada", description: "Creamy coconut and pineapple mix." }
+                ]
+            },
+            {
+                category: "Wines",
+                items: [
+                    { id: 20, name: "Four Cousins Red", price: 1500, image: "https://via.placeholder.com/300x300?text=Four+Cousins+Red", description: "Sweet, fruity red wine." },
+                    { id: 21, name: "Cellar Cask White", price: 1400, image: "https://via.placeholder.com/300x300?text=Cellar+Cask+White", description: "Crisp, light white wine." },
+                    { id: 22, name: "Cape Valley Rosé", price: 1450, image: "https://via.placeholder.com/300x300?text=Cape+Valley+Rosé", description: "Refreshing and floral rosé." },
+                    { id: 23, name: "Robertson Sweet Red", price: 1550, image: "https://via.placeholder.com/300x300?text=Robertson+Red", description: "Rich, sweet red for dessert." }
+                ]
+            },
+            {
+                category: "Non-Alcoholic",
+                items: [
+                    { id: 24, name: "Virgin Dawa", price: 600, image: "https://via.placeholder.com/300x300?text=Virgin+Dawa", description: "Honey, lime, and soda mocktail." },
+                    { id: 25, name: "Mango Lassi", price: 550, image: "https://via.placeholder.com/300x300?text=Mango+Lassi", description: "Creamy, tropical yogurt drink." },
+                    { id: 26, name: "Fresh Madafu", price: 300, image: "https://via.placeholder.com/300x300?text=Madafu", description: "Pure coconut water, straight from the coast." },
+                    { id: 27, name: "Passion Fruit Cooler", price: 500, image: "https://via.placeholder.com/300x300?text=Passion+Cooler", description: "Zesty passion fruit and soda." }
+                ]
+            }
+        ];
+
+        const popularDrinks = [drinks[0].items[0], drinks[2].items[0], drinks[1].items[0], drinks[4].items[0]];
+
+        // Age Verification Modal
+        function AgeVerificationModal({ onConfirm, onDeny }) {
+            return (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-xl animate-fade-in">
+                        <h2 className="text-2xl font-extrabold text-[#14B8A6] mb-4">Age Verification</h2>
+                        <p className="text-gray-700 mb-6">You must be 19 or older to access Viwan's Tropique Beach Bar & Grill. Are you 19+?</p>
+                        <div className="flex justify-between">
+                            <button
+                                onClick={onConfirm}
+                                className="bg-[#14B8A6] text-white py-2 px-6 rounded-full hover:bg-[#F87171] font-bold transition transform hover:scale-105"
+                            >
+                                Yes
+                            </button>
+                            <button
+                                onClick={onDeny}
+                                className="bg-[#F87171] text-white py-2 px-6 rounded-full hover:bg-[#14B8A6] font-bold transition transform hover:scale-105"
+                            >
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Search Bar Component
+        function SearchBar({ onSearch }) {
+            const [query, setQuery] = React.useState('');
+
+            const handleSearch = (e) => {
+                const value = e.target.value;
+                setQuery(value);
+                onSearch(value);
+                if (value) {
+                    gtag('event', 'search', { event_category: 'Engagement', event_label: 'Menu Search', search_term: value });
+                }
+            };
+
+            const clearSearch = () => {
+                setQuery('');
+                onSearch('');
+                gtag('event', 'clear_search', { event_category: 'Engagement', event_label: 'Clear Search' });
+            };
+
+            return (
+                <div className="flex items-center max-w-md mx-auto">
+                    <input
+                        type="text"
+                        value={query}
+                        onChange={handleSearch}
+                        placeholder="Search drinks or categories..."
+                        className="w-full p-4 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                    />
+                    {query && (
+                        <button
+                            onClick={clearSearch}
+                            className="ml-2 bg-[#F87171] text-white py-2 px-4 rounded-full hover:bg-[#14B8A6] font-bold transition"
+                        >
+                            Clear
+                        </button>
+                    )}
+                </div>
+            );
+        }
+
+        // Drinks Menu Component
+        function DrinksMenu() {
+            const [searchQuery, setSearchQuery] = React.useState('');
+
+            const filteredDrinks = drinks.map(category => ({
+                ...category,
+                items: category.items.filter(drink =>
+                    drink.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    category.category.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+            })).filter(category => category.items.length > 0);
+
+            return (
+                <div>
+                    <SearchBar onSearch={setSearchQuery} />
+                    <div className="space-y-16">
+                        {filteredDrinks.length > 0 ? (
+                            filteredDrinks.map(category => (
+                                <div key={category.category}>
+                                    <h3 className="text-3xl font-extrabold text-[#14B8A6] mb-8">{category.category}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4">
+                                        {category.items.map(drink => (
+                                            <div key={drink.id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition transform hover:-translate-y-2 opacity-0 animate-fade-in" style={{ animationDelay: `${drink.id * 100}ms` }}>
+                                                <img src={drink.image} alt={drink.name} className="w-full h-48 object-cover rounded-lg mb-4" />
+                                                <h4 className="text-xl font-bold text-[#14B8A6]">{drink.name}</h4>
+                                                <p className="text-gray-600 text-sm">{drink.description}</p>
+                                                <p className="text-lg font-semibold text-[#FACC15]">KSh {drink.price}</p>
+                                                <button
+                                                    onClick={() => addToCart(drink)}
+                                                    className="mt-4 bg-[#FACC15] text-[#14B8A6] py-2 px-6 rounded-full hover:bg-[#F87171] font-bold w-full transition"
+                                                >
+                                                    Add to Cart
+                                                </button>
+                                                <button
+                                                    onClick={() => payWithMpesa(drink)}
+                                                    className="mt-2 bg-[#F87171] text-white py-2 px-6 rounded-full hover:bg-[#14B8A6] font-bold w-full transition"
+                                                >
+                                                    Pay with M-Pesa
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-600 text-lg">No drinks match your search.</p>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // Popular Picks Component
+        function PopularPicks() {
+            return (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4">
+                    {popularDrinks.map(drink => (
+                        <div key={drink.id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition transform hover:-translate-y-2">
+                            <img src={drink.image} alt={drink.name} className="w-full h-48 object-cover rounded-lg mb-4" />
+                            <h4 className="text-xl font-bold text-[#14B8A6]">{drink.name}</h4>
+                            <p className="text-gray-600 text-sm">{drink.description}</p>
+                            <p className="text-lg font-semibold text-[#FACC15]">KSh {drink.price}</p>
+                            <button
+                                onClick={() => addToCart(drink)}
+                                className="mt-4 bg-[#FACC15] text-[#14B8A6] py-2 px-6 rounded-full hover:bg-[#F87171] font-bold w-full transition"
+                            >
+                                Add to Cart
+                            </button>
+                            <button
+                                onClick={() => payWithMpesa(drink)}
+                                className="mt-2 bg-[#F87171] text-white py-2 px-6 rounded-full hover:bg-[#14B8A6] font-bold w-full transition"
+                            >
+                                Pay with M-Pesa
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        // Cart Component
+        function Cart() {
+            const [cartItems, setCartItems] = React.useState(JSON.parse(localStorage.getItem('cart')) || []);
+
+            React.useEffect(() => {
+                localStorage.setItem('cart', JSON.stringify(cartItems));
+                const countElement = document.getElementById('cart-count');
+                const totalElement = document.getElementById('cart-total');
+                const checkoutButton = document.getElementById('checkout-button');
+                if (countElement && totalElement && checkoutButton) {
+                    countElement.textContent = cartItems.length;
+                    const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+                    totalElement.textContent = `Total: KSh ${total}`;
+                    checkoutButton.classList.toggle('hidden', cartItems.length === 0);
+                }
+            }, [cartItems]);
+
+            const removeFromCart = (index) => {
+                const item = cartItems[index];
+                setCartItems(cartItems.filter((_, i) => i !== index));
+                gtag('event', 'remove_from_cart', { event_category: 'Ecommerce', event_label: item.name, value: item.price });
+            };
+
+            return (
+                <div className="max-w-2xl mx-auto">
+                    {cartItems.length === 0 ? (
+                        <p className="text-gray-600">Your cart is empty.</p>
+                    ) : (
+                        cartItems.map((item, index) => (
+                            <div key={index} className="flex justify-between items-center bg-white p-4 mb-4 rounded-lg shadow">
+                                <div>
+                                    <h4 className="text-lg font-bold text-[#14B8A6]">{item.name}</h4>
+                                    <p className="text-gray-600 text-sm">{item.description}</p>
+                                    <p className="text-lg font-semibold text-[#FACC15]">KSh {item.price}</p>
+                                </div>
+                                <button
+                                    onClick={() => removeFromCart(index)}
+                                    className="text-red-500 hover:text-red-600"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        ))
+                    )}
+                </div>
+            );
+        }
+
+        // Live Chat Component
+        function LiveChat() {
+            const [messages, setMessages] = React.useState([]);
+            const [newMessage, setNewMessage] = React.useState('');
+            const [isChatOpen, setIsChatOpen] = React.useState(false);
+            const dbRef = firebase.database().ref('chat');
+
+            React.useEffect(() => {
+                dbRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const messageList = Object.values(data).map(msg => ({
+                            text: msg.message,
+                            timestamp: msg.timestamp
+                        }));
+                        setMessages(messageList);
+                    }
+                }, (error) => {
+                    console.error('Live Chat Error:', error);
+                    alert('Error loading chat. Please try again.');
+                });
+                return () => dbRef.off();
+            }, []);
+
+            const sendMessage = () => {
+                if (newMessage.trim()) {
+                    const message = {
+                        message: newMessage,
+                        timestamp: new Date().toISOString()
+                    };
+                    dbRef.push(message)
+                        .then(() => {
+                            setNewMessage('');
+                            gtag('event', 'chat_message', { event_category: 'Engagement', event_label: 'Live Chat' });
+                        })
+                        .catch(error => {
+                            console.error('Send Message Error:', error);
+                            alert('Error sending message. Try again.');
+                        });
+                }
+            };
+
+            return (
+                <div className="fixed bottom-4 right-4 z-50">
+                    <button
+                        onClick={() => setIsChatOpen(!isChatOpen)}
+                        className="bg-[#14B8A6] text-white p-4 rounded-full shadow-lg hover:bg-[#F87171] transition-transform transform hover:scale-105"
+                    >
+                        {isChatOpen ? 'Close Chat' : 'Chat with Us'}
+                    </button>
+                    {isChatOpen && (
+                        <div className="bg-white w-80 h-96 rounded-lg shadow-lg mt-2 flex flex-col">
+                            <div className="flex-1 p-4 overflow-y-auto">
+                                {messages.map((msg, index) => (
+                                    <div key={index} className="mb-2 p-2 bg-[#FACC15] rounded-lg">
+                                        <p className="text-sm">{msg.text}</p>
+                                        <p className="text-xs text-gray-500">{new Date(msg.timestamp).toLocaleTimeString()}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="p-4 border-t">
+                                <input
+                                    type="text"
+                                    value={newMessage}
+                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    placeholder="Type a message..."
+                                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                />
+                                <button
+                                    onClick={sendMessage}
+                                    className="mt-2 w-full bg-[#14B8A6] text-white p-2 rounded-lg hover:bg-[#F87171]"
+                                >
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Functions
+        function addToCart(drink) {
+            try {
+                const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+                cartItems.push(drink);
+                localStorage.setItem('cart', JSON.stringify(cartItems));
+                const orderId = `VT${Math.floor(1000 + Math.random() * 9000)}`;
+                const loyaltyId = localStorage.getItem('loyaltyId') || `VL${Math.floor(1000 + Math.random() * 9000)}`;
+                localStorage.setItem('loyaltyId', loyaltyId);
+                const points = Math.floor(drink.price / 1000 * 10);
+                db.ref('orders').push({
+                    orderId,
+                    drink: drink.name,
+                    price: drink.price,
+                    status: 'Pending',
+                    timestamp: new Date().toISOString(),
+                    loyaltyId
+                }).then(() => {
+                    updateLoyaltyPoints(loyaltyId, points);
+                    alert(`${drink.name} added to cart! Order ID: ${orderId}. Earned ${points} loyalty points.`);
+                    ReactDOM.render(<Cart />, document.getElementById('cart-items'));
+                    gtag('event', 'add_to_cart', { event_category: 'Ecommerce', event_label: drink.name, value: drink.price });
+                }).catch(error => {
+                    console.error('Add to Cart Error:', error);
+                    alert('Error adding to cart. Try again.');
+                });
+            } catch (error) {
+                console.error('Add to Cart Error:', error);
+                alert('Error adding to cart. Try again.');
+            }
+        }
+
+        function checkout() {
+            try {
+                const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+                if (cartItems.length === 0) {
+                    alert('Your cart is empty.');
+                    return;
+                }
+                const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+                const qrCodeUrl = `https://via.placeholder.com/150x150?text=M-Pesa+QR+Checkout+KSh${total}`;
+                alert(`Scan this QR code to pay KSh ${total} for your order via M-Pesa. (Demo: No real payment.) URL: ${qrCodeUrl}`);
+                gtag('event', 'checkout', { event_category: 'Ecommerce', event_label: 'Checkout', value: total });
+                localStorage.setItem('cart', JSON.stringify([]));
+                ReactDOM.render(<Cart />, document.getElementById('cart-items'));
+            } catch (error) {
+                console.error('Checkout Error:', error);
+                alert('Error during checkout. Try again.');
+            }
+        }
+
+        function payWithMpesa(drink) {
+            try {
+                const qrCodeUrl = `https://via.placeholder.com/150x150?text=M-Pesa+QR+${drink.name.replace(/\s+/g, '+')}+KSh${drink.price}`;
+                alert(`Scan this QR code to pay KSh ${drink.price} for ${drink.name} via M-Pesa. (Demo: No real payment.) URL: ${qrCodeUrl}`);
+                gtag('event', 'mpesa_payment', { event_category: 'Ecommerce', event_label: drink.name, value: drink.price });
+            } catch (error) {
+                console.error('M-Pesa Payment Error:', error);
+                alert('Error processing M-Pesa payment. Try again.');
+            }
+        }
+
+        function updateLoyaltyPoints(loyaltyId, points) {
+            try {
+                db.ref(`loyalty/${loyaltyId}`).once('value').then(snapshot => {
+                    const currentPoints = snapshot.val()?.points || 0;
+                    db.ref(`loyalty/${loyaltyId}`).set({ points: currentPoints + points })
+                        .catch(error => console.error('Update Loyalty Error:', error));
+                }).catch(error => {
+                    console.error('Fetch Loyalty Error:', error);
+                    alert('Error updating loyalty points.');
+                });
+            } catch (error) {
+                console.error('Loyalty Points Error:', error);
+                alert('Error updating loyalty points.');
+            }
+        }
+
+        function checkLoyalty() {
+            try {
+                const loyaltyId = document.getElementById('loyalty-id').value;
+                const statusDiv = document.getElementById('loyalty-status');
+                if (!loyaltyId) {
+                    statusDiv.innerHTML = '<span class="text-red-600">Please enter a valid Loyalty ID.</span>';
+                    return;
+                }
+                db.ref(`loyalty/${loyaltyId}`).once('value').then(snapshot => {
+                    const data = snapshot.val();
+                    if (data) {
+                        statusDiv.innerHTML = `Loyalty ID ${loyaltyId}: <span class="font-semibold">${data.points}</span> points. Redeem 100 points for a free drink!`;
+                        gtag('event', 'check_loyalty', { event_category: 'Engagement', event_label: 'Loyalty Check' });
+                    } else {
+                        statusDiv.innerHTML = '<span class="text-red-600">Loyalty ID not found.</span>';
+                    }
+                }).catch(error => {
+                    console.error('Check Loyalty Error:', error);
+                    statusDiv.innerHTML = '<span class="text-red-600">Error checking points.</span>';
+                });
+            } catch (error) {
+                console.error('Check Loyalty Error:', error);
+                document.getElementById('loyalty-status').innerHTML = '<span class="text-red-600">Error checking points.</span>';
+            }
+        }
+
+        function trackOrder() {
+            try {
+                const orderId = document.getElementById('order-id').value;
+                const statusDiv = document.getElementById('order-status');
+                if (!orderId) {
+                    statusDiv.innerHTML = '<span class="text-red-600">Please enter a valid order ID.</span>';
+                    return;
+                }
+                db.ref('orders').orderByChild('orderId').equalTo(orderId).once('value').then(snapshot => {
+                    const order = snapshot.val();
+                    if (order) {
+                        const orderData = Object.values(order)[0];
+                        statusDiv.innerHTML = `Order ${orderId}: <span class="font-semibold">${orderData.status}</span> - ${orderData.drink} (KSh ${orderData.price})`;
+                        gtag('event', 'track_order', { event_category: 'Engagement', event_label: 'Track Order' });
+                    } else {
+                        statusDiv.innerHTML = '<span class="text-red-600">Order not found.</span>';
+                    }
+                }).catch(error => {
+                    console.error('Track Order Error:', error);
+                    statusDiv.innerHTML = '<span class="text-red-600">Error tracking order.</span>';
+                });
+            } catch (error) {
+                console.error('Track Order Error:', error);
+                document.getElementById('order-status').innerHTML = '<span class="text-red-600">Error tracking order.</span>';
+            }
+        }
+
+        function sendContactMessage() {
+            try {
+                const name = document.getElementById('contact-name').value;
+                const email = document.getElementById('contact-email').value;
+                const message = document.getElementById('contact-message').value;
+                if (!name || !email || !message) {
+                    alert('Please fill out all fields.');
+                    return;
+                }
+                db.ref('contacts').push({
+                    name,
+                    email,
+                    message,
+                    timestamp: new Date().toISOString()
+                }).then(() => {
+                    alert('Message sent! We’ll get back to you soon.');
+                    document.getElementById('contact-name').value = '';
+                    document.getElementById('contact-email').value = '';
+                    document.getElementById('contact-message').value = '';
+                    gtag('event', 'send_message', { event_category: 'Engagement', event_label: 'Contact Message' });
+                }).catch(error => {
+                    console.error('Contact Message Error:', error);
+                    alert('Error sending message. Try again.');
+                });
+            } catch (error) {
+                console.error('Contact Message Error:', error);
+                alert('Error sending message. Try again.');
+            }
+        }
+
+        // Event Listeners
+        window.onload = () => {
+            try {
+                if (!sessionStorage.getItem('ageVerified')) {
+                    const root = document.createElement('div');
+                    root.id = 'age-verification';
+                    document.body.appendChild(root);
+                    const handleConfirm = () => {
+                        sessionStorage.setItem('ageVerified', 'true');
+                        document.getElementById('age-verification').remove();
+                        gtag('event', 'age_verification_yes', { event_category: 'Engagement', event_label: 'Age Verification Yes' });
+                    };
+                    const handleDeny = () => {
+                        window.location.href = 'https://www.google.com';
+                    };
+                    ReactDOM.render(<AgeVerificationModal onConfirm={handleConfirm} onDeny={handleDeny} />, document.getElementById('age-verification'));
+                }
+                ReactDOM.render(<Cart />, document.getElementById('cart-items'));
+                ReactDOM.render(<PopularPicks />, document.getElementById('popular-picks'));
+                ReactDOM.render(<DrinksMenu />, document.getElementById('drinks-menu'));
+                ReactDOM.render(<LiveChat />, document.getElementById('live-chat'));
+
+                // Attach event listeners to buttons
+                const checkoutButton = document.getElementById('checkout-button');
+                const loyaltyButton = document.getElementById('check-loyalty-button');
+                const trackButton = document.getElementById('track-order-button');
+                const contactButton = document.getElementById('contact-button');
+
+                if (checkoutButton) checkoutButton.onclick = checkout;
+                if (loyaltyButton) loyaltyButton.onclick = checkLoyalty;
+                if (trackButton) trackButton.onclick = trackOrder;
+                if (contactButton) contactButton.onclick = sendContactMessage;
+            } catch (error) {
+                console.error('Window Onload Error:', error);
+                alert('Error loading page. Please refresh.');
+            }
+        };
+
+    </script>
+
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.5s ease-out forwards;
+        }
+        .font-inter {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</body>
+</html>
